@@ -1,0 +1,12 @@
+"use strict";
+
+var IOperateType;
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.IOperateType = void 0, function(IOperateType) {
+    IOperateType.drawStart = "drawStart", IOperateType.drawEnd = "drawEnd", IOperateType.drawing = "drawing", 
+    IOperateType.moving = "moving", IOperateType.moveStart = "moveStart", IOperateType.moveEnd = "moveEnd", 
+    IOperateType.brushActive = "brushActive", IOperateType.brushClear = "brushClear";
+}(IOperateType = exports.IOperateType || (exports.IOperateType = {}));
+//# sourceMappingURL=type.js.map

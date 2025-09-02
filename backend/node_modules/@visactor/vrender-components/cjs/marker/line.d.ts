@@ -1,0 +1,32 @@
+import type { IMarkLineLabelPosition, MarkerLineLabelAttrs } from './type';
+import type { MarkLineAttrs, MarkerAnimationState } from './type';
+import type { ComponentOptions } from '../interface';
+import { MarkCommonLine } from './common-line';
+import type { ArcSegment } from '../segment';
+import { Segment } from '../segment';
+import type { IGroup, ILineGraphicAttribute } from '@visactor/vrender-core';
+export declare function registerMarkLineAnimate(): void;
+export declare class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLabelPosition> {
+    name: string;
+    static defaultAttributes: Partial<MarkLineAttrs>;
+    protected _line: Segment | ArcSegment;
+    protected markerAnimate(state: MarkerAnimationState): void;
+    constructor(attributes: MarkLineAttrs, options?: ComponentOptions);
+    protected getPointAttrByPosition(position: IMarkLineLabelPosition, labelAttrs: MarkerLineLabelAttrs<IMarkLineLabelPosition>): {
+        position: {
+            x: number;
+            y: number;
+        };
+        angle: number;
+    };
+    protected getRotateByAngle(angle: number, labelAttrs: MarkerLineLabelAttrs<IMarkLineLabelPosition>): number;
+    protected getTextStyle(position: IMarkLineLabelPosition, labelAngle: number, autoRotate: boolean): {
+        textAlign: string;
+        textBaseline: string;
+    };
+    protected createSegment(): Segment;
+    protected setLineAttributes(): void;
+    protected isValidPoints(): boolean;
+    protected addMarkLineLabels(container: IGroup): void;
+    protected updateMarkLineLabels(): void;
+}

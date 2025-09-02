@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/common/zero.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,MAAM,IAAI,GAAG,CAAC,CAAM,EAAE,EAAE,CAAC,CAAC,CAAC","file":"zero.js","sourcesContent":["export const zero = (_: any) => 0;\n"]}

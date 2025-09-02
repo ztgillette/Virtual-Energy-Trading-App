@@ -1,0 +1,12 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.map = void 0;
+
+const map = (data, options) => {
+    const {callback: callback} = options;
+    return callback && (data = data.map(callback)), data;
+};
+
+exports.map = map;

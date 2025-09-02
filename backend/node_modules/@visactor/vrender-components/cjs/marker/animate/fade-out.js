@@ -1,0 +1,36 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.pointFadeOut = exports.arcAreaFadeOut = exports.areaFadeOut = exports.commonLineFadeOut = void 0;
+
+const common_1 = require("./common"), vutils_1 = require("@visactor/vutils");
+
+function commonLineFadeOut(line, label, duration, delay, easing) {
+    (0, common_1.segmentFadeOut)(line, delay, duration, easing), (0, vutils_1.array)(label).forEach((labelNode => {
+        (0, common_1.tagFadeOut)(labelNode, delay, duration, easing);
+    }));
+}
+
+function areaFadeOut(area, label, duration, delay, easing) {
+    (0, common_1.graphicFadeOut)(area, delay, duration, easing), (0, vutils_1.array)(label).forEach((labelNode => {
+        (0, common_1.tagFadeOut)(labelNode, delay, duration, easing);
+    }));
+}
+
+function arcAreaFadeOut(area, label, duration, delay, easing) {
+    (0, common_1.graphicFadeOut)(area, delay, duration, easing), (0, vutils_1.array)(label).forEach((labelNode => {
+        (0, common_1.tagFadeOut)(labelNode, delay, duration, easing);
+    }));
+}
+
+function pointFadeOut(itemLine, decorativeLine, item, duration, delay, easing) {
+    var _a;
+    (0, common_1.segmentFadeOut)(itemLine, delay, duration, easing), (0, common_1.graphicFadeOut)(decorativeLine, delay, duration, easing), 
+    (null === (_a = item.getTextShape) || void 0 === _a ? void 0 : _a.call(item)) ? (0, 
+    common_1.tagFadeOut)(item, delay, duration, easing) : (0, common_1.graphicFadeOut)(item, delay, duration, easing);
+}
+
+exports.commonLineFadeOut = commonLineFadeOut, exports.areaFadeOut = areaFadeOut, 
+exports.arcAreaFadeOut = arcAreaFadeOut, exports.pointFadeOut = pointFadeOut;
+//# sourceMappingURL=fade-out.js.map

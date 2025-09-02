@@ -1,0 +1,4 @@
+export const map = (data, options) => {
+    const {callback: callback} = options;
+    return callback && (data = data.map(callback)), data;
+};

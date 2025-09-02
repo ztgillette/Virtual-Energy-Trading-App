@@ -1,0 +1,102 @@
+import { isGreater, isLess, tau, normalizeAngle, polarToCartesian, merge, obbSeparation, aabbSeparation } from "@visactor/vutils";
+
+import { traverseGroup } from "../util/common";
+
+import { scale, length } from "../util";
+
+import { DEFAULT_AXIS_BREAK_SYMBOL_STYLE } from "./config";
+
+import { isAngleHorizontal } from "./overlap/util";
+
+export const clampRadian = (angle = 0) => {
+    if (angle < 0) for (;angle < 0; ) angle += tau; else if (angle > 0) for (;angle > tau; ) angle -= tau;
+    return angle;
+};
+
+export function isInRange(a, min, max) {
+    return !isLess(a, min, 0, 1e-6) && !isGreater(a, max, 0, 1e-6);
+}
+
+export function getCircleLabelPosition(tickPosition, tickVector) {
+    return {
+        x: tickPosition.x + tickVector[0],
+        y: tickPosition.y + tickVector[1]
+    };
+}
+
+export function getAxisBreakSymbolAttrs(props = {}) {
+    var _a, _b;
+    const {style: style = {}, angle: angle = .5 * Math.PI} = props, symbolStyle = merge({}, DEFAULT_AXIS_BREAK_SYMBOL_STYLE, style), symbolSize = null !== (_a = symbolStyle.size) && void 0 !== _a ? _a : DEFAULT_AXIS_BREAK_SYMBOL_STYLE.size;
+    return Object.assign(Object.assign({}, symbolStyle), {
+        symbolType: null !== (_b = symbolStyle.symbolType) && void 0 !== _b ? _b : `M ${-symbolSize / 2} ${symbolSize * Math.sin(angle)} L ${symbolSize / 2} ${-symbolSize * Math.sin(angle)}`,
+        symbolSize: symbolSize
+    });
+}
+
+export function getElMap(g) {
+    const elMap = {};
+    return traverseGroup(g, (el => {
+        "group" !== el.type && el.id && (elMap[el.id] = el);
+    })), elMap;
+}
+
+export function getVerticalCoord(point, vector) {
+    return {
+        x: point.x + vector[0],
+        y: point.y + vector[1]
+    };
+}
+
+export function getCircleVerticalVector(offset, point, center, inside = !1, axisInside = !1) {
+    const vector = [ point.x - center.x, point.y - center.y ];
+    return scale(vector, (inside ? -1 : 1) * (axisInside ? -1 : 1) * offset / length(vector));
+}
+
+export function angleLabelOrientAttribute(angle) {
+    let align = "center", baseline = "middle";
+    return align = (angle = normalizeAngle(angle)) >= Math.PI * (5 / 3) || angle <= Math.PI * (1 / 3) ? "left" : angle >= Math.PI * (2 / 3) && angle <= Math.PI * (4 / 3) ? "right" : "center", 
+    baseline = angle >= Math.PI * (7 / 6) && angle <= Math.PI * (11 / 6) ? "bottom" : angle >= Math.PI * (1 / 6) && angle <= Math.PI * (5 / 6) ? "top" : "middle", 
+    {
+        align: align,
+        baseline: baseline
+    };
+}
+
+export function getPolarAngleLabelPosition(angle, center, radius, labelOffset, inside) {
+    const point = polarToCartesian({
+        x: 0,
+        y: 0
+    }, radius, angle), labelPoint = getVerticalCoord(point, getCircleVerticalVector(labelOffset, point, center, inside));
+    return getCircleLabelPosition(labelPoint, getCircleVerticalVector(labelOffset || 1, labelPoint, center, inside));
+}
+
+export function getCirclePoints(center, count, radius, startAngle, endAngle) {
+    const points = [], range = endAngle - startAngle;
+    for (let i = 0; i < count; i++) {
+        const angle = startAngle + i * range / count;
+        points.push(polarToCartesian(center, radius, angle));
+    }
+    return points;
+}
+
+export function getPolygonPath(points, closed) {
+    let path = "";
+    return 0 === points.length || (points.forEach(((point, index) => {
+        0 === index ? path = `M${point.x},${point.y}` : path += `L${point.x},${point.y}`;
+    })), closed && (path += "Z")), path;
+}
+
+export function textIntersect(textA, textB, sep) {
+    var _a;
+    const angle = null === (_a = textA.attribute) || void 0 === _a ? void 0 : _a.angle;
+    if (isAngleHorizontal(angle, Number.EPSILON)) return sep > aabbSeparation(textA.AABBBounds, textB.AABBBounds);
+    const a = textA.OBBBounds, b = textB.OBBBounds;
+    return !a || !b || a.empty() || b.empty() ? sep > aabbSeparation(textA.AABBBounds, textB.AABBBounds) : a.intersects(b) || sep > obbSeparation(a, b);
+}
+
+export function hasOverlap(items, pad) {
+    for (let b, i = 1, n = items.length, a = items[0]; i < n; a = b, ++i) if (b = items[i], 
+    textIntersect(a, b, pad)) return !0;
+    return !1;
+}
+//# sourceMappingURL=util.js.map

@@ -1,0 +1,12 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+});
+
+const objectProto = Object.prototype, isPrototype = function(value) {
+    const Ctor = value && value.constructor;
+    return value === ("function" == typeof Ctor && Ctor.prototype || objectProto);
+};
+
+exports.default = isPrototype;

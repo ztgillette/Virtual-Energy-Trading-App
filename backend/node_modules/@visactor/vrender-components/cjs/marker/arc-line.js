@@ -1,0 +1,108 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.MarkArcLine = exports.registerMarkArcLineAnimate = void 0;
+
+const vutils_1 = require("@visactor/vutils"), segment_1 = require("../segment"), register_1 = require("./register"), constant_1 = require("../constant"), common_line_1 = require("./common-line"), type_1 = require("./type"), config_1 = require("./config"), animate_1 = require("./animate/animate");
+
+function registerMarkArcLineAnimate() {
+    MarkArcLine._animate = animate_1.markCommonLineAnimate;
+}
+
+(0, register_1.loadMarkArcLineComponent)(), exports.registerMarkArcLineAnimate = registerMarkArcLineAnimate;
+
+class MarkArcLine extends common_line_1.MarkCommonLine {
+    markerAnimate(state) {
+        MarkArcLine._animate && this._animationConfig && MarkArcLine._animate(this._line, this._label, this._animationConfig, state);
+    }
+    constructor(attributes, options) {
+        super((null == options ? void 0 : options.skipDefault) ? attributes : (0, vutils_1.merge)({}, MarkArcLine.defaultAttributes, attributes)), 
+        this.name = "markArcLine";
+    }
+    getPointAttrByPosition(direction, labelAttrs) {
+        const {center: center, radius: radius, startAngle: startAngle, endAngle: endAngle} = this.attribute, {refX: refX = 0, refY: refY = 0} = labelAttrs;
+        let angle;
+        switch (direction) {
+          case type_1.IMarkCommonArcLabelPosition.arcInnerStart:
+            angle = startAngle;
+
+          case type_1.IMarkCommonArcLabelPosition.arcOuterStart:
+            angle = startAngle;
+            break;
+
+          case type_1.IMarkCommonArcLabelPosition.arcInnerEnd:
+            angle = endAngle;
+
+          case type_1.IMarkCommonArcLabelPosition.arcOuterEnd:
+            angle = endAngle;
+            break;
+
+          case type_1.IMarkCommonArcLabelPosition.center:
+          case type_1.IMarkCommonArcLabelPosition.arcInnerMiddle:
+          case type_1.IMarkCommonArcLabelPosition.arcOuterMiddle:
+          default:
+            angle = (startAngle + endAngle) / 2;
+        }
+        return {
+            position: {
+                x: center.x + (radius + refY) * Math.cos(angle) + refX * Math.cos(angle - Math.PI / 2),
+                y: center.y + (radius + refY) * Math.sin(angle) + refX * Math.sin(angle - Math.PI / 2)
+            },
+            angle: angle
+        };
+    }
+    getTextStyle(position) {
+        return config_1.DEFAULT_POLAR_MARKER_TEXT_STYLE_MAP[position];
+    }
+    getRotateByAngle(angle, labelAttrs) {
+        var _a;
+        return angle - Math.PI / 2 + (null !== (_a = labelAttrs.refAngle) && void 0 !== _a ? _a : 0);
+    }
+    createSegment() {
+        const {center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, startSymbol: startSymbol, endSymbol: endSymbol, lineStyle: lineStyle, state: state} = this.attribute;
+        return new segment_1.ArcSegment({
+            center: center,
+            radius: radius,
+            startAngle: startAngle,
+            endAngle: endAngle,
+            startSymbol: startSymbol,
+            endSymbol: endSymbol,
+            lineStyle: lineStyle,
+            state: {
+                line: (0, vutils_1.merge)({}, constant_1.DEFAULT_STATES, null == state ? void 0 : state.line),
+                startSymbol: (0, vutils_1.merge)({}, constant_1.DEFAULT_STATES, null == state ? void 0 : state.lineStartSymbol),
+                endSymbol: (0, vutils_1.merge)({}, constant_1.DEFAULT_STATES, null == state ? void 0 : state.lineEndSymbol)
+            }
+        });
+    }
+    setLineAttributes() {
+        const {center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, startSymbol: startSymbol, endSymbol: endSymbol, lineStyle: lineStyle, state: state} = this.attribute;
+        this._line && this._line.setAttributes({
+            center: center,
+            radius: radius,
+            startAngle: startAngle,
+            endAngle: endAngle,
+            startSymbol: startSymbol,
+            endSymbol: endSymbol,
+            lineStyle: lineStyle,
+            state: {
+                line: (0, vutils_1.merge)({}, constant_1.DEFAULT_STATES, null == state ? void 0 : state.line),
+                startSymbol: (0, vutils_1.merge)({}, constant_1.DEFAULT_STATES, null == state ? void 0 : state.lineStartSymbol),
+                endSymbol: (0, vutils_1.merge)({}, constant_1.DEFAULT_STATES, null == state ? void 0 : state.lineEndSymbol)
+            }
+        });
+    }
+    isValidPoints() {
+        return !0;
+    }
+    addMarkLineLabels(container) {
+        this._addMarkLabels(container, "mark-common-line-label", MarkArcLine.defaultAttributes.label);
+    }
+    updateMarkLineLabels() {
+        this._updateMarkLabels(MarkArcLine.defaultAttributes.label);
+    }
+}
+
+exports.MarkArcLine = MarkArcLine, MarkArcLine.defaultAttributes = config_1.DEFAULT_MARK_ARC_LINE_THEME;
+//# sourceMappingURL=arc-line.js.map
