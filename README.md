@@ -1,5 +1,7 @@
 # Virtual-Energy-Trading-App
 
+Feel free to view screenshot of project (screenshot.png)!
+
 ## Getting Started
 
 To run, navigate to `/backend` folder and run `uvicorn main:app --reload` to get the FastAPI server running.
